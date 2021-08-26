@@ -16,7 +16,7 @@ public class Calculate {
         List<String> subArrayParts = new ArrayList<String>();
 
         List<String> arrayParts = getArrayParts(strOfNumbers);
-        if (arrayParts.size()==0) {
+        if (arrayParts.size() == 0) {
             throw new NegativeArraySizeException("Не удалось получить массив значений.");
         }
 
@@ -53,32 +53,56 @@ public class Calculate {
 
     private static List<String> getArrayParts(String strOfNumbers){
         List<String> arrayParts = new ArrayList<String>();
-
-        String strOperations = "*/+-()";
-        String part = "";
-        String str;
+        if (strOfNumbers.equals("")){
+            return arrayParts;
+        }
 
         strOfNumbers = strOfNumbers.replaceAll("×", "*");
         strOfNumbers = strOfNumbers.replaceAll("÷", "/");
         strOfNumbers = strOfNumbers.replaceAll(",", ".");
         strOfNumbers = strOfNumbers.replaceAll(" ", "");
+
+        String strOperations = "*/+-()";
+        StringBuilder part = new StringBuilder();
+        String str;
+
+        int strOfNumbersLength = strOfNumbers.length();
+        char lastChar = strOfNumbers.charAt(strOfNumbersLength-1);
+
+        if(strOperations.contains(Character.toString(lastChar))){
+            if (strOfNumbers.length() == 1) {
+                return arrayParts;
+            }
+            if (!(lastChar == ')')){
+                strOfNumbers = strOfNumbers.substring(0,strOfNumbersLength-1);
+            }
+        }
+
         char[] chars = strOfNumbers.toCharArray();
         for (int i = 0; i < chars.length; i++) {
             str = Character.toString(chars[i]);
 
-            if (strOperations.indexOf(str)==-1) {
-                part+=str;
+            if (!strOperations.contains(str)) {
+                part.append(str);
             }else {
-                if (part!="") {
-                    arrayParts.add(part);
-                    part = "";
+                String partStr = part.toString();
+                if (!partStr.equals("")) {
+                    if (partStr.equals(".")){
+                        partStr = "0.0";
+                    }
+                    arrayParts.add(partStr);
+                    part = new StringBuilder();
                 }
                 arrayParts.add(str);
             }
         }
-        if (part!="") {
-            arrayParts.add(part);
-            part = "";
+        String partStr = part.toString();
+        if (!partStr.equals("")) {
+            if (partStr.equals(".")){
+                partStr = "0.0";
+            }
+            arrayParts.add(partStr);
+            part = new StringBuilder();
         }
         return arrayParts;
     }
@@ -92,7 +116,7 @@ public class Calculate {
         if (arrayParts.size() == 1) {
             resultCalculate = Double.parseDouble(arrayParts.get(0));
         } else {
-            System.out.println("Ошибка при расчете.");
+            throw new NegativeArraySizeException("Ошибка при расчете.");
         }
 
         return resultCalculate;

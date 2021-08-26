@@ -29,7 +29,17 @@ public class MainActivity extends AppCompatActivity {
     public void makeArithmeticExample(View v) {
         if (v instanceof Button) {
             Button currentButton = (Button) v;
-            ArithmeticExample += currentButton.getText();
+            String currentSymbol = (String) currentButton.getText();
+            int lengthStr = ArithmeticExample.length();
+            if (lengthStr > 0){
+                String lastSymbol = "";
+                lastSymbol = ArithmeticExample.substring(lengthStr-1);
+                String strOperations = "+-×÷,";
+                if (strOperations.contains(lastSymbol) && strOperations.contains(currentSymbol)){
+                    ArithmeticExample= ArithmeticExample.substring(0,lengthStr-1);
+                }
+            }
+            ArithmeticExample += currentSymbol;
             textView.setText(ArithmeticExample);
         }
     }
@@ -40,8 +50,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void calculateOnButton(View v) {
-        Double res = Calculate.CalculateFromString(ArithmeticExample);
-        ArithmeticExampleHistory += ArithmeticExample + " = " + res.toString() +"\n";
+        if (ArithmeticExample.equals("")){
+            return;
+        }
+
+        String resString = "ERROR";
+        try {
+            double res = Calculate.CalculateFromString(ArithmeticExample);
+            resString = Double.toString(res);
+        } catch (NegativeArraySizeException e){
+//            System.out.println(e.getMessage());
+        }
+        ArithmeticExampleHistory += ArithmeticExample + " = " + resString +"\n";
         textViewHistory.setText(ArithmeticExampleHistory);
 
         ArithmeticExample = "";
